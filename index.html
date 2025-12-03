@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<title>日本ホテル投資データ × ROIシミュレーションプラットフォーム | Reinsight Japan</title>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="日本全国のホテル・不動産データに基づき、投資コストと回収期間（ROI）を自動計算するプロフェッショナル向け分析プラットフォーム。投資判断をデータドリブンに支援します。" name="description"/>
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      line-height: 1.6;
+      color: #222;
+      background: #f7f7fb;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #eee;
+    }
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+    }
+    .logo span {
+      display: inline-block;
+      padding: 4px 8px;
+      margin-right: 6px;
+      border-radius: 6px;
+      background: #1e88e5;
+      color: #fff;
+      font-size: 13px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+    }
+    .nav-links a {
+      position: relative;
+      padding-bottom: 4px;
+    }
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: #1e88e5;
+      transition: width 0.2s ease;
+    }
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    .nav-cta {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: #1e88e5;
+      color: #fff;
+      border-color: #1e88e5;
+    }
+    .btn-primary:hover { background: #1565c0; border-color: #1565c0; }
+    .btn-outline {
+      border-color: #ccc;
+      background: #fff;
+    }
+    .btn-outline:hover {
+      border-color: #1e88e5;
+      color: #1e88e5;
+    }
+
+    main { padding-bottom: 80px; }
+
+    /* Hero */
+    .hero {
+      padding: 56px 0 40px;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.6fr);
+      gap: 32px;
+      align-items: center;
+    }
+    .hero-title {
+      font-size: 30px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #e3f2fd;
+      color: #1565c0;
+      margin-bottom: 14px;
+    }
+    .hero-sub {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    .hero-kpi {
+      display: flex;
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .hero-kpi-box {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #eee;
+    }
+    .hero-kpi-label {
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 4px;
+    }
+    .hero-kpi-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e88e5;
+    }
+    .hero-mini {
+      font-size: 11px;
+      color: #999;
+      margin-top: 4px;
+    }
+    .hero-right {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 14px 14px 16px;
+      box-shadow: 0 12px 35px rgba(15, 35, 95, 0.12);
+      border: 1px solid #e0e7ff;
+    }
+    .hero-right-header {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .badge-soft {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+    .hero-form-row {
+      display: grid;
+      grid-template-columns: 1.1fr 1.1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+    .hero-form-group label {
+      display: block;
+      margin-bottom: 3px;
+      color: #555;
+    }
+    .hero-form-group input,
+    .hero-form-group select {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #dde2f5;
+      padding: 6px 8px;
+      font-size: 11px;
+      outline: none;
+    }
+    .hero-form-group input:focus,
+    .hero-form-group select:focus {
+      border-color: #1e88e5;
+    }
+    .hero-form-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      gap: 8px;
+    }
+    .hero-result {
+      font-size: 11px;
+      color: #444;
+    }
+    .hero-result span {
+      font-weight: 700;
+      color: #1e88e5;
+    }
+
+    section {
+      padding: 40px 0 20px;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .section-sub {
+      font-size: 13px;
+      color: #666;
+      max-width: 640px;
+      margin: 0 auto 24px;
+      text-align: center;
+    }
+
+    /* Features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .feature-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 16px;
+      border: 1px solid #eee;
+    }
+    .feature-tag {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e3f2fd;
+      color: #1565c0;
+      margin-bottom: 8px;
+    }
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .feature-text {
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+    .feature-meta {
+      font-size: 11px;
+      color: #999;
+    }
+
+    /* Data section */
+    .data-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1.3fr;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    .data-kpi-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .data-kpi {
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid #eee;
+      font-size: 12px;
+    }
+    .data-kpi span {
+      display: block;
+    }
+    .data-kpi .label {
+      font-size: 11px;
+      color: #777;
+      margin-bottom: 3px;
+    }
+    .data-kpi .value {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e88e5;
+    }
+    .data-note {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #999;
+    }
+    .data-chart-placeholder {
+      background: linear-gradient(135deg, #eef2ff, #e3f2fd);
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px dashed #c5cae9;
+      font-size: 11px;
+      color: #455a64;
+    }
+    .data-chart-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .data-mini {
+      background: #fff;
+      border-radius: 10px;
+      padding: 8px;
+      font-size: 10px;
+      border: 1px solid #e0e7ff;
+    }
+
+    /* Flow */
+    .flow-steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .flow-step {
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid #eee;
+      font-size: 11px;
+    }
+    .flow-step-number {
+      font-size: 10px;
+      color: #1e88e5;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .flow-step-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    /* Company & Contact */
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1.1fr 1.1fr;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .company-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #eee;
+    }
+    .company-table tr:nth-child(odd) {
+      background: #fafafa;
+    }
+    .company-table th,
+    .company-table td {
+      padding: 8px 10px;
+      text-align: left;
+    }
+    .company-table th {
+      width: 30%;
+      font-weight: 600;
+      color: #555;
+      background: #f5f5f5;
+    }
+    .company-note {
+      font-size: 11px;
+      color: #999;
+      margin-top: 6px;
+    }
+    .contact-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px 14px 16px;
+      border: 1px solid #eee;
+      font-size: 12px;
+    }
+    .contact-card label {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 11px;
+      color: #555;
+    }
+    .contact-card input,
+    .contact-card textarea {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #dde2f5;
+      padding: 6px 8px;
+      font-size: 12px;
+      margin-bottom: 8px;
+      outline: none;
+    }
+    .contact-card textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    .contact-card input:focus,
+    .contact-card textarea:focus {
+      border-color: #1e88e5;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding: 16px 0 20px;
+      border-top: 1px solid #eee;
+      font-size: 11px;
+      color: #777;
+      background: #fafafa;
+    }
+    footer .container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero-inner,
+      .data-layout,
+      .two-cols {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .features-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .flow-steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      .hero {
+        padding-top: 32px;
+      }
+      .hero-title { font-size: 22px; }
+      .hero-kpi { flex-direction: column; }
+      .flow-steps {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  
+
+    /* === AI 技術紹介セクション === */
+    .ai-tech {
+      padding: 72px 0 64px;
+      background: linear-gradient(135deg, #e3f2fd 0%, #f9f7ff 60%, #eef2ff 100%);
+    }
+    .ai-tech-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 32px 32px 36px;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(33,150,243,0.35), transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(92,107,192,0.35), transparent 55%),
+        #0b1020;
+      color: #e3f2fd;
+      box-shadow: 0 18px 40px rgba(13,27,60,0.45);
+    }
+    .ai-tech-inner::before {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.06);
+      pointer-events: none;
+    }
+    .ai-tech-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.8fr) minmax(0, 1.4fr);
+      gap: 32px;
+      align-items: center;
+    }
+    .ai-tech-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: 0.08em;
+    }
+    .ai-tech-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(21,101,192,0.3);
+      font-size: 11px;
+      margin-bottom: 10px;
+      color: #bbdefb;
+    }
+    .ai-tech-lead {
+      font-size: 14px;
+      margin-bottom: 14px;
+      color: #e8eaf6;
+    }
+    .ai-tech-text {
+      font-size: 13px;
+      margin-bottom: 10px;
+      color: #c5cae9;
+    }
+    .ai-tech-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .ai-tech-badge {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(144,202,249,0.6);
+      font-size: 11px;
+      color: #bbdefb;
+      background: rgba(13,71,161,0.35);
+    }
+    .ai-tech-right {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 12px;
+    }
+    .ai-chip-card {
+      background: linear-gradient(135deg, rgba(100,181,246,0.22), rgba(171,71,188,0.22));
+      border-radius: 14px;
+      padding: 16px 18px;
+      border: 1px solid rgba(227,242,253,0.4);
+      box-shadow: 0 12px 26px rgba(0,0,0,0.45);
+    }
+    .ai-chip-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .ai-chip-text {
+      font-size: 12px;
+      color: #e8eaf6;
+    }
+    .ai-industry-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 11px;
+    }
+    .ai-industry-pill {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(26,35,126,0.8);
+      text-align: center;
+      border: 1px solid rgba(159,168,218,0.6);
+    }
+    .ai-mini-note {
+      font-size: 10px;
+      color: #c5cae9;
+      margin-top: 6px;
+    }
+    @media (max-width: 900px) {
+      .ai-tech {
+        padding: 56px 0 52px;
+      }
+      .ai-tech-inner {
+        padding: 24px 20px 28px;
+        border-radius: 20px;
+      }
+      .ai-tech-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+      }
+    }
+</style>
+</head>
+<body>
+<!-- Header -->
+<header>
+<div class="container">
+<div class="nav">
+<div class="logo">
+<span>JP</span>Reinsight Japan
+        </div>
+<nav class="nav-links">
+<a href="#top">ホーム</a>
+<a href="#services">サービス</a>
+<a href="#data">データと分析</a>
+<a href="#flow">導入プロセス</a>
+<a href="#company">会社概要</a>
+<a href="#contact">お問い合わせ</a>
+</nav>
+<div class="nav-cta">
+<button class="btn btn-outline" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">資料請求</button>
+<button class="btn btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">無料デモ相談</button>
+</div>
+</div>
+</div>
+</header>
+<main id="top">
+<!-- Hero -->
+<section class="hero">
+<div class="container">
+<div class="hero-inner">
+<div>
+<div class="hero-badge">
+              日本全国ホテル・不動産データ × 投資シミュレーション
+            </div>
+<h1 class="hero-title">
+              ホテル投資の「立地・価格・回収期間」を<br/>
+              ひと目で判断できるデータプラットフォーム
+            </h1>
+<p class="hero-sub">
+              Reinsight Japan は、日本全国のホテル・不動産データを統合し、<br/>
+              物件価格・客室面積・立地条件から投資コストと回収期間（ROI）を自動算出する、
+              投資家・デベロッパー・金融機関向けの分析基盤です。
+            </p>
+<div>
+<button class="btn btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">
+                投資シミュレーションのデモを依頼する
+              </button>
+<button class="btn btn-outline" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})" style="margin-left:8px;">
+                サービス概要を見る
+              </button>
+</div>
+<div class="hero-kpi">
+<div class="hero-kpi-box">
+<div class="hero-kpi-label">対象ホテル件数（全国）</div>
+<div class="hero-kpi-value">13,000<span style="font-size:11px;"> 件以上</span></div>
+<div class="hero-mini">※自社調査および公開データに基づく</div>
+</div>
+<div class="hero-kpi-box">
+<div class="hero-kpi-label">分析指標</div>
+<div class="hero-kpi-value">50<span style="font-size:11px;">＋</span></div>
+<div class="hero-mini">平均価格・客室数・距離・稼働想定 等</div>
+</div>
+</div>
+</div>
+<div class="hero-right">
+<div class="hero-right-header">
+<span>東京ホテル投資シミュレーション（サンプル）</span>
+<span class="badge-soft">リアルデータで算出</span>
+</div>
+<div class="hero-form-row">
+<div class="hero-form-group">
+<label>エリア・最寄駅</label>
+<select>
+<option>千代田区・東京駅周辺</option>
+<option>港区・新橋／汐留</option>
+<option>新宿区・新宿駅周辺</option>
+<option>台東区・上野／浅草</option>
+</select>
+</div>
+<div class="hero-form-group">
+<label>敷地面積（㎡）</label>
+<input placeholder="例）500" type="number"/>
+</div>
+</div>
+<div class="hero-form-row">
+<div class="hero-form-group">
+<label>土地取得価格（円）</label>
+<input placeholder="例）350,000,000" type="number"/>
+</div>
+<div class="hero-form-group">
+<label>建築・開発コスト（円）</label>
+<input placeholder="例）450,000,000" type="number"/>
+</div>
+</div>
+<div class="hero-form-footer">
+<button class="btn btn-primary" style="font-size:11px; padding:6px 14px;">
+                回収期間を試算する
+              </button>
+<div class="hero-result">
+                想定投資回収期間：<span>17.8 年</span><br/>
+                想定年間キャッシュフロー：<span>約45,000,000 円</span>
+</div>
+</div>
+<div class="hero-mini" style="margin-top:8px;">
+              ※上記はサンプル値です。実際の試算はエリア別の平均ADR・稼働率・客室構成など複数指標を加味して算出します。
+            </div>
+</div>
+</div>
+</div>
+</section>
+<!-- AI 技術紹介セクション -->
+<section aria-label="Reinsight JapanのAI技術紹介" class="ai-tech">
+<div class="ai-tech-inner">
+<div class="ai-tech-grid">
+<div>
+<div class="ai-tech-pill">自社開発AI × 日本全国データ基盤</div>
+<h2 class="ai-tech-title">ホテル投資を支えるAI分析エンジンとデータ統合基盤</h2>
+<p class="ai-tech-lead">
+              Reinsight Japan は、自社開発のAIアルゴリズムと大規模データ処理基盤を組み合わせ、
+              日本全国のホテル・不動産データに加え、消費者動向・商業統計・周辺エリア情報など多様なデータを統合的に解析します。
+            </p>
+<p class="ai-tech-text">
+              物件価格・建築コスト・客室面積・稼働率などのハードデータに加えて、
+              エリア別の宿泊需要、イベント情報、競合状況といったソフトデータも取り込み、
+              投資収益・回収期間（ROI）のシミュレーションを高精度に行います。
+            </p>
+<p class="ai-tech-text">
+              現在はホテル・不動産を中心にデモを提供していますが、分析エンジン自体は業種を問わず拡張可能であり、
+              今後は小売・物流・オフィス・観光施設など、さまざまなアセットタイプへの展開を予定しています。
+            </p>
+<div class="ai-tech-badges">
+<span class="ai-tech-badge">時系列需要予測モデル</span>
+<span class="ai-tech-badge">価格感応度・シナリオ分析</span>
+<span class="ai-tech-badge">地域統計・オープンデータ連携</span>
+<span class="ai-tech-badge">BIツール連携ダッシュボード</span>
+</div>
+</div>
+<div class="ai-tech-right">
+<div class="ai-chip-card">
+<div class="ai-chip-title">AIによる投資回収シミュレーションの流れ</div>
+<p class="ai-chip-text">
+                1. データ収集：物件データ、マーケットデータ、需要指標、周辺競合情報などを収集・正規化。<br/>
+                2. 特徴量設計：立地・価格・客室構成・交通アクセス・周辺施設などを統合的に数値化。<br/>
+                3. 学習・推計：機械学習・時系列AIを用いて収益カーブと回収期間を推計。<br/>
+                4. シナリオ比較：稼働率・単価・コスト前提を変えながら複数シナリオを瞬時に比較します。
+              </p>
+<p class="ai-mini-note">
+                ※ 実運用では、お客様の社内データや既存レポート形式に合わせてモデルを個別カスタマイズします。
+              </p>
+</div>
+<div class="ai-chip-card">
+<div class="ai-chip-title">ホテル以外の業界への展開</div>
+<p class="ai-chip-text">
+                Reinsight Japan の分析基盤は、ホテル投資をはじめとした不動産案件だけでなく、
+                需要予測と投資回収が重要となるさまざまな業態に適用可能です。
+              </p>
+<div class="ai-industry-grid">
+<div class="ai-industry-pill">商業施設</div>
+<div class="ai-industry-pill">ロードサイド店舗</div>
+<div class="ai-industry-pill">物流センター</div>
+<div class="ai-industry-pill">オフィス</div>
+<div class="ai-industry-pill">観光・レジャー</div>
+<div class="ai-industry-pill">その他アセット</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Services -->
+<section id="services">
+<div class="container">
+<h2 class="section-title">提供サービス</h2>
+<p class="section-sub">
+          Reinsight Japan は、ホテル・不動産投資に特化したデータプラットフォームとして、
+          立地選定から投資判断、モニタリングまでを一気通貫で支援します。
+        </p>
+<div class="features-grid">
+<div class="feature-card">
+<div class="feature-tag">SERVICE 01</div>
+<div class="feature-title">全国ホテル・不動産データベース</div>
+<p class="feature-text">
+              日本全国のホテル・宿泊施設・関連不動産データを統合。行政区・沿線・駅距離・客室数・平均価格など、
+              投資判断に必要な情報を一元管理できます。
+            </p>
+<div class="feature-meta">
+              ・対象エリア：主要都市から地方エリアまで<br>
+              ・データ更新：定期更新（頻度は要相談）
+            </br></div>
+</div>
+<div class="feature-card">
+<div class="feature-tag">SERVICE 02</div>
+<div class="feature-title">投資コスト＆回収期間シミュレーション</div>
+<p class="feature-text">
+              土地価格・建築コスト・客室構成・想定稼働率などを入力するだけで、
+              総投資額・年間収益・投資回収期間（ROI）を自動算出。複数シナリオの比較も可能です。
+            </p>
+<div class="feature-meta">
+              ・ホテル／簡易宿所／再開発 等に対応<br>
+              ・金融機関向け案件検証にも活用可能
+            </br></div>
+</div>
+<div class="feature-card">
+<div class="feature-tag">SERVICE 03</div>
+<div class="feature-title">インタラクティブ地図＆ダッシュボード</div>
+<p class="feature-text">
+              地図上で候補地をクリックすると、周辺ホテルの供給状況・平均単価・駅距離などを即座に可視化。
+              Power BI 等のBIツールと連携したダッシュボードで、社内共有もスムーズです。
+            </p>
+<div class="feature-meta">
+              ・社内ポータル／投資委員会資料への転用も容易<br>
+              ・地図・グラフのブランドカスタマイズも対応
+            </br></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Data & Analytics -->
+<section id="data">
+<div class="container">
+<h2 class="section-title">データと分析イメージ</h2>
+<p class="section-sub">
+          現地で収集したデータと公開統計を組み合わせ、ホテル投資に特化した指標を多数用意。
+          東京エリアのサンプルダッシュボードを例に、分析イメージをご紹介します。
+        </p>
+<div class="data-layout">
+<div>
+<h3 style="font-size:14px; font-weight:600; margin-bottom:6px;">主な分析指標（例：東京）</h3>
+<div class="data-kpi-list">
+<div class="data-kpi">
+<span class="label">区別ホテル件数</span>
+<span class="value">48</span>
+<span style="font-size:11px; color:#777;">最多：豊島区／新宿区エリア</span>
+</div>
+<div class="data-kpi">
+<span class="label">平均客室数</span>
+<span class="value">159 室</span>
+<span style="font-size:11px; color:#777;">ビジネスホテル中心の規模感</span>
+</div>
+<div class="data-kpi">
+<span class="label">平均客室単価</span>
+<span class="value">24 千円</span>
+<span style="font-size:11px; color:#777;">平日・休日を含む平均値</span>
+</div>
+<div class="data-kpi">
+<span class="label">投資回収期間レンジ</span>
+<span class="value">10〜25 年</span>
+<span style="font-size:11px; color:#777;">立地・仕様により大きく変動</span>
+</div>
+</div>
+<div class="data-note">
+              ※為替レートや稼働率前提はお客様の条件に合わせて設定可能です。<br/>
+              ※一部の数値はイメージです。実データは個別商談時にご説明いたします。
+            </div>
+</div>
+<div>
+<div class="data-chart-placeholder">
+<strong>ダッシュボード表示イメージ</strong><br/>
+              実際の環境では、以下のようなグラフを Power BI 等で表示します。
+              <div class="data-chart-grid">
+<div class="data-mini">
+<strong style="font-size:11px;">区別平均ホテル価格</strong><br/>
+                  棒グラフで、行政区ごとの平均客室単価を比較。
+                </div>
+<div class="data-mini">
+<strong style="font-size:11px;">客室数と平均価格</strong><br/>
+                  客室数レンジ別に、単価と収益性のトレンドを表示。
+                </div>
+<div class="data-mini">
+<strong style="font-size:11px;">駅距離と価格の関係</strong><br/>
+                  「駅徒歩〜分」ごとの価格帯分布を可視化。
+                </div>
+</div>
+<div style="margin-top:10px; font-size:11px;">
+                貴社内のデータ基盤や既存ツールに合わせて、オンプレミス／クラウドいずれの構成にも対応可能です。
+              </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Flow -->
+<section id="flow">
+<div class="container">
+<h2 class="section-title">導入までの流れ</h2>
+<p class="section-sub">
+          現在お持ちの案件情報や社内データ環境をヒアリングしたうえで、
+          投資判断に必要な指標を設計し、最短距離で「使えるダッシュボード」まで構築いたします。
+        </p>
+<div class="flow-steps">
+<div class="flow-step">
+<div class="flow-step-number">STEP 01</div>
+<div class="flow-step-title">ヒアリング・要件整理</div>
+<p>
+              対象エリア、想定案件規模、投資判断プロセス、社内での利用シーンなどをお伺いし、
+              必要な指標と画面構成を一緒に整理します。
+            </p>
+</div>
+<div class="flow-step">
+<div class="flow-step-number">STEP 02</div>
+<div class="flow-step-title">データ設計・収集</div>
+<p>
+              公開データ・現地調査データ・お客様保有データを組み合わせ、
+              ホテル投資向けのデータマートを設計・整備します。
+            </p>
+</div>
+<div class="flow-step">
+<div class="flow-step-number">STEP 03</div>
+<div class="flow-step-title">ダッシュボード構築</div>
+<p>
+              地図・グラフ・シミュレーション画面を実装し、
+              経営層・投資委員会でそのまま利用できるレベルに仕上げます。
+            </p>
+</div>
+<div class="flow-step">
+<div class="flow-step-number">STEP 04</div>
+<div class="flow-step-title">運用・改善サポート</div>
+<p>
+              実際の案件で使いながら指標を微調整し、定期的なデータ更新や新規エリア追加にも対応します。
+            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Company & Contact -->
+<section id="company">
+<div class="container">
+<h2 class="section-title">会社概要・お問い合わせ</h2>
+<p class="section-sub">
+          日本国内での法人登記に基づき、現地パートナーと連携しながらサービスを提供しています。
+          詳細な会社情報は登記簿謄本・会社案内等と合わせてご確認いただけます。
+        </p>
+<div class="two-cols">
+<div>
+<table class="company-table">
+<tr>
+<th>会社名</th>
+<td>大開元株式会社</td>
+</tr>
+<tr>
+<th>所在地</th>
+<td>〒134-0082 東京都江戸川区江戸川六丁目40番14−11号</td>
+</tr>
+<tr>
+<th>設立</th>
+<td>令和6年9月6日</td>
+</tr>
+<tr>
+<th>法人番号</th>
+<td>0117-01-027624</td>
+</tr>
+<tr>
+<th>代表者</th>
+<td>
+                  取締役　單 開 元<br/>
+                  取締役　上村 碧 華
+                </td>
+</tr>
+<tr>
+<th>資本金</th>
+<td>800万円</td>
+</tr><tr><th>メール</th><td>tankaigen@daikaigen.co.jp</td></tr>
+<tr>
+<th>事業内容</th>
+<td>
+                  ・国際貿易及び国際ビジネスに関するコンサルティング<br>
+                  ・不動産の投資、保有、売買、賃貸及び管理並びに仲介・コンサルティング<br/>
+                  ・インターネットを利用した情報の配信及び販売<br/>
+                  ・情報販売に関するホームページの運営<br/>
+                  ・前各号に附帯又は関連する一切の事業
+                </br></td>
+</tr>
+</table>
+<div class="company-note">
+              ※上記は登記情報に基づく概要です。詳細は最新の登記事項証明書等をご確認ください。
+            </div>
+</div>
+<div id="contact">
+<div class="contact-card">
+<h3 style="font-size:14px; font-weight:600; margin-bottom:8px;">お問い合わせ・資料請求</h3>
+<p style="font-size:11px; color:#666; margin-bottom:8px;">
+                投資シミュレーションのデモ希望や、データカバレッジの詳細、
+                既存BI環境との連携などについて、お気軽にお問い合わせください。
+              </p>
+<form>
+<label>会社名</label>
+<input placeholder="例）〇〇不動産株式会社" type="text"/>
+<label>ご担当者名</label>
+<input placeholder="例）山田 太郎" type="text"/>
+<label>メールアドレス</label>
+<input placeholder="例）example@company.co.jp" type="email"/>
+<label>お問い合わせ内容</label>
+<textarea placeholder="ご興味のあるエリアや想定案件、現在の課題などをご記入ください。"></textarea>
+<button class="btn btn-primary" style="width:100%; margin-top:4px;" type="submit">
+                  送信する
+                </button>
+</form>
+<div style="font-size:10px; color:#999; margin-top:6px;">
+                ※本フォームはデモ用です。実際の運用時には、送信先メールアドレス設定や
+                reCAPTCHA 等のセキュリティ対策を実装してください。
+              </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer>
+<div class="container">
+<div>© Reinsight Japan / 大開元株式会社. All rights reserved.</div>
+<div>
+<a href="#top">トップに戻る</a>
+</div>
+</div>
+</footer>
+</body>
+</html>
